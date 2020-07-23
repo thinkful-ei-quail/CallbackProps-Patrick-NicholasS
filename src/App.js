@@ -3,6 +3,11 @@ import List from './List'
 import './App.css';
 import STORE from './STORE';
 
+function omit(obj, keyToOmit) {
+  let {[keyToOmit]: _, ...rest} = obj;
+  return rest;
+}
+
 class App extends Component {
 
   state = {
@@ -11,23 +16,29 @@ class App extends Component {
 
   handleAddClick = (listId) => {
     const card = this.newRandomCard();
-    const {store} = this.state;
-    store.allCards.push(card);
-    const list = store.lists.filter(list => list.id === listId);
-    list.push(card);
+    const {lists,allCards} = this.state.store;
+    allCards.push(card);
+    const list = lists.filter(list => list.id === listId);
+    list.cardIds.push(card.id);
   }
 
-  handleDeleteClick = (id) => {
-    let {lists} = this.state;
+  
 
-    lists = lists.map(list => {
-      return list.filter(card => {
-        return card.id !== id;
-      })
+  handleDeleteClick = (cardId) => {
+    let {lists,allCards} = this.state.store;
+    
+    const newLists = lists.map(list => {
+      return {
+        ...lists,
+        cardIds: list.cardIds.filter(id =>id !== cardId)
+      }
     });
+    const data = omit(allCards,cardId)
 
-    this.setState({lists: lists});
+    this.setState({store:{lists:newLists,allCards:data}})
   }
+     
+    
 
   newRandomCard = () => {
     const id = Math.random().toString(36).substring(2, 4)
@@ -48,7 +59,8 @@ class App extends Component {
         </header>
         <div className='App-list'>
           {store.lists.map(list => (
-            <List
+            <List handleAddClick={(id) => this.handleAddClick}
+            handleDeleteClick={(id) => this.handleDeleteClick} 
               key={list.id}
               header={list.header}
               cards={list.cardIds.map(id => store.allCards[id])}
