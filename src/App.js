@@ -4,6 +4,8 @@ import './App.css';
 import STORE from './STORE';
 
 class App extends Component {
+  static defaultProps = {
+  };
 
   state = {
     store: STORE
@@ -11,10 +13,9 @@ class App extends Component {
 
   handleAddClick = (listId) => {
     const card = this.newRandomCard();
-    const {store} = this.state;
-    store.allCards.push(card);
-    const list = store.lists.filter(list => list.id === listId);
-    list.push(card);
+    {store} = this.sate
+    this.state.store.allCards.push(card);
+    const list = this.state.store.lists.filter(list => list.id === listId);
   }
 
   handleDeleteClick = (id) => {
