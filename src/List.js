@@ -12,11 +12,12 @@ export default function List(props) {
         {props.cards.map((card) =>
           <Card handleDeleteClick ={props.handleDeleteClick}
             key={card.id}
+            id={card.id}
             title={card.title}
             content={card.content}
           />
         )}
-        <button  onClick={() => props.handleAddClick(props.id)}
+        <button  onClick={() => {props.handleAddClick(props.id)}}
           type='button'
           className='List-add-button'
         >

@@ -4,9 +4,10 @@ import './App.css';
 import STORE from './STORE';
 
 function omit(obj, keyToOmit) {
-  let {[keyToOmit]: _, ...rest} = obj;
-  return rest;
-}
+   return Object.entries(obj).reduce(
+      (newObj, [key, value]) => 
+      key === keyToOmit ? newObj : {...newObj, 
+        [key]: value}, {} ); }
 
 class App extends Component {
 
@@ -17,10 +18,19 @@ class App extends Component {
   handleAddClick = (listId) => {
     const card = this.newRandomCard();
     const {lists,allCards} = this.state.store;
-    allCards.push(card);
-    const list = lists.filter(list => list.id === listId);
-    list.cardIds.push(card.id);
-  }
+    const newList = lists.map(list => {
+      
+        if (list.id ===listId){
+        return {
+          ...list,
+          cardIds:[...list.cardIds,card.id]
+        }}
+        return list
+      }
+      )
+    const data = {...allCards,[`${card.id}`]:card}
+      this.setState({store:{lists:newList,allCards:data}})
+  };
 
   
 
@@ -59,9 +69,10 @@ class App extends Component {
         </header>
         <div className='App-list'>
           {store.lists.map(list => (
-            <List handleAddClick={(id) => this.handleAddClick}
-            handleDeleteClick={(id) => this.handleDeleteClick} 
+            <List handleAddClick={this.handleAddClick}
+            handleDeleteClick={this.handleDeleteClick} 
               key={list.id}
+              id={list.id}
               header={list.header}
               cards={list.cardIds.map(id => store.allCards[id])}
             />
