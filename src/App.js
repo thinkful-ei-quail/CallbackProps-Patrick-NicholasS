@@ -3,6 +3,12 @@ import List from './List'
 import './App.css';
 import STORE from './STORE';
 
+function omit(obj, keyToOmit) {
+   return Object.entries(obj).reduce(
+      (newObj, [key, value]) => 
+      key === keyToOmit ? newObj : {...newObj, 
+        [key]: value}, {} ); }
+
 class App extends Component {
   static defaultProps = {
   };
@@ -13,22 +19,38 @@ class App extends Component {
 
   handleAddClick = (listId) => {
     const card = this.newRandomCard();
-    {store} = this.sate
-    this.state.store.allCards.push(card);
-    const list = this.state.store.lists.filter(list => list.id === listId);
-  }
+    const {lists,allCards} = this.state.store;
+    const newList = lists.map(list => {
+      
+        if (list.id ===listId){
+        return {
+          ...list,
+          cardIds:[...list.cardIds,card.id]
+        }}
+        return list
+      }
+      )
+    const data = {...allCards,[`${card.id}`]:card}
+      this.setState({store:{lists:newList,allCards:data}})
+  };
 
-  handleDeleteClick = (id) => {
-    let {lists} = this.state;
+  
 
-    lists = lists.map(list => {
-      return list.filter(card => {
-        return card.id !== id;
-      })
+  handleDeleteClick = (cardId) => {
+    let {lists,allCards} = this.state.store;
+    
+    const newLists = lists.map(list => {
+      return {
+        ...lists,
+        cardIds: list.cardIds.filter(id =>id !== cardId)
+      }
     });
+    const data = omit(allCards,cardId)
 
-    this.setState({lists: lists});
+    this.setState({store:{lists:newLists,allCards:data}})
   }
+     
+    
 
   newRandomCard = () => {
     const id = Math.random().toString(36).substring(2, 4)
@@ -49,8 +71,10 @@ class App extends Component {
         </header>
         <div className='App-list'>
           {store.lists.map(list => (
-            <List
+            <List handleAddClick={this.handleAddClick}
+            handleDeleteClick={this.handleDeleteClick} 
               key={list.id}
+              id={list.id}
               header={list.header}
               cards={list.cardIds.map(id => store.allCards[id])}
             />
