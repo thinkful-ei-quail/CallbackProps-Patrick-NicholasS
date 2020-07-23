@@ -31,7 +31,7 @@ class App extends Component {
       }
       )
     const data = {...allCards,[`${card.id}`]:card}
-      this.setState({store:{lists:newList,allCards:data}})
+    this.setState({store:{lists:newList,allCards:data}})
   };
 
   
@@ -39,12 +39,12 @@ class App extends Component {
   handleDeleteClick = (cardId) => {
     let {lists,allCards} = this.state.store;
     
-    const newLists = lists.map(list => {
-      return {
-        ...lists,
+    const newLists = lists.map(list => (
+      {
+        ...list,
         cardIds: list.cardIds.filter(id =>id !== cardId)
       }
-    });
+    ));
     const data = omit(allCards,cardId)
 
     this.setState({store:{lists:newLists,allCards:data}})
@@ -71,8 +71,9 @@ class App extends Component {
         </header>
         <div className='App-list'>
           {store.lists.map(list => (
-            <List handleAddClick={this.handleAddClick}
-            handleDeleteClick={this.handleDeleteClick} 
+            <List 
+              handleAddClick={this.handleAddClick}
+              handleDeleteClick={this.handleDeleteClick} 
               key={list.id}
               id={list.id}
               header={list.header}
